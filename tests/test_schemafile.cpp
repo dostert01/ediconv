@@ -58,21 +58,3 @@ TEST(schemaFile, getVersionWorks) {
     EXPECT_EQ("D96A", schemaFile.getMessageVersion());
 }
 
-TEST(schemaFile, processingWorks) {
-    test_schemafile::configureTest();
-    auto schemaFile = std::make_shared<edi::SchemaFile>();
-    auto edifile = std::make_shared<edi::EdiFile>();
-    edi::Edi2XmlProcessor processor;
-    schemaFile->loadFromFile(test_schemafile::testFilesDir + SCHEMA_TEST_FILE_02);
-    edifile->loadFromFile((test_schemafile::testFilesDir + EDI_TEST_FILE_01));
-    std::shared_ptr<pugi::xml_document> ediXml = std::make_shared<pugi::xml_document>();
-    processor.process(edifile, schemaFile, ediXml);
-    ediXml->save(std::cout, "  ");
-}
-
-TEST(creatingXmlDoc, canCreateANode) {
-    pugi::xml_document doc;
-    pugi::xml_node node = doc.append_child("rootElement");
-    doc.save(std::cout, "  ");
-    EXPECT_EQ("rootElement", std::string(node.name()));
-}
