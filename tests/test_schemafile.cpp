@@ -4,7 +4,7 @@
 #include <vector>
 #include <gtest/gtest.h>
 
-#include "SchemaFile.h"
+#include "edi2XmlProcessor.h"
 
 #define SCHEMA_TEST_FILE_01 "/pricatSchema01.xml"
 #define SCHEMA_TEST_FILE_02 "/pricatSchema02.xml"
@@ -60,12 +60,13 @@ TEST(schemaFile, getVersionWorks) {
 
 TEST(schemaFile, processingWorks) {
     test_schemafile::configureTest();
-    edi::SchemaFile schemaFile;
-    edi::EdiFile edifile;
-    schemaFile.loadFromFile(test_schemafile::testFilesDir + SCHEMA_TEST_FILE_02);
-    edifile.loadFromFile((test_schemafile::testFilesDir + EDI_TEST_FILE_01));
+    auto schemaFile = std::make_shared<edi::SchemaFile>();
+    auto edifile = std::make_shared<edi::EdiFile>();
+    edi::Edi2XmlProcessor processor;
+    schemaFile->loadFromFile(test_schemafile::testFilesDir + SCHEMA_TEST_FILE_02);
+    edifile->loadFromFile((test_schemafile::testFilesDir + EDI_TEST_FILE_01));
     std::shared_ptr<pugi::xml_document> ediXml = std::make_shared<pugi::xml_document>();
-    schemaFile.process(edifile, ediXml);
+    processor.process(edifile, schemaFile, ediXml);
     ediXml->save(std::cout, "  ");
 }
 

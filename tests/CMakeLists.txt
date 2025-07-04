@@ -29,6 +29,7 @@ add_executable(
         test_schemafile.cpp
         ../SchemaFile.cpp
         ../EdiFile.cpp
+        ../edi2XmlProcessor.cpp
 )
 add_test(NAME test_schemafile COMMAND test_schemafile)
 set_tests_properties(test_schemafile PROPERTIES ENVIRONMENT "TEST_FILES_DIR=${TEST_FILES_DIR}")
