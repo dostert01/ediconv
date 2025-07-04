@@ -1,0 +1,171 @@
+<EdifactMessage type="PRICAT" version="D96A">
+
+    <!-- Message Header -->
+    <Segment name="UNH" required="true" description="Message header">
+        <Element position="1" name="Message Reference Number" required="true"/>
+        <Element position="2" name="Message Identifier" required="true" description="S009 Composite">
+            <Composite name="S009 - Message Identifier">
+                <Component position="1" name="Message Type" required="true"
+                           CodeListName="EDIFACT Message Types"
+                           CodeListAgency="UNECE"
+                           isQualifier="true"/>
+                <Component position="2" name="Message Version Number" required="true"/>
+                <Component position="3" name="Message Release Number" required="true"/>
+                <Component position="4" name="Controlling Agency" required="true"
+                           CodeListName="Controlling Agency Codes"
+                           CodeListAgency="UNECE"
+                           isQualifier="true"/>
+                <Component position="5" name="Association Assigned Code" required="false"/>
+            </Composite>
+        </Element>
+    </Segment>
+
+    <!-- Beginning of message -->
+    <Segment name="BGM" required="true" description="Beginning of message">
+        <Element position="1" name="Document Message Name" required="true" description="C002 Composite">
+            <Composite name="C002 - Document/Message Name">
+                <Component position="1" name="Document Name Code" required="true"
+                           CodeListName="Document/Message Name Codes"
+                           CodeListAgency="UNECE"
+                           isQualifier="true"/>
+                <Component position="2" name="Code List Responsible Agency" required="false"/>
+                <Component position="3" name="Document Name" required="false"/>
+            </Composite>
+        </Element>
+        <Element position="2" name="Document Message Number" required="true"/>
+        <Element position="3" name="Message Function Code" required="false"
+                 CodeListName="Message Function Codes"
+                 CodeListAgency="UNECE"
+                 isQualifier="true"/>
+    </Segment>
+
+    <!-- Date/time/period -->
+    <Segment name="DTM" required="true" description="Date/time/period">
+        <Element position="1" name="Date/Time/Period" required="true" description="C507 Composite">
+            <Composite name="C507 - Date/Time/Period">
+                <Component position="1" name="Date/Time/Period Qualifier" required="true"
+                           CodeListName="Date/Time/Period Qualifiers"
+                           CodeListAgency="UNECE"
+                           isQualifier="true"/>
+                <Component position="2" name="Date/Time/Period" required="true"/>
+                <Component position="3" name="Format Qualifier" required="false"
+                           CodeListName="Date/Time/Period Format Codes"
+                           CodeListAgency="UNECE"
+                           isQualifier="true"/>
+            </Composite>
+        </Element>
+    </Segment>
+
+    <!-- Segment Group 1: Parties -->
+    <SegmentGroup name="SG1_Parties" start="NAD" maxOccurs="10" description="Name and address group">
+        <Segment name="NAD" required="true" description="Name and address">
+            <Element position="1" name="Party Function Code Qualifier" required="true"
+                     CodeListName="Party Function Codes"
+                     CodeListAgency="UNECE"
+                     isQualifier="true"/>
+            <Element position="2" name="Party Identification Details" required="true" description="C082 Composite">
+                <Composite name="C082 - Party Identification Details">
+                    <Component position="1" name="Party Id" required="true"/>
+                    <Component position="2" name="Code List Qualifier" required="false"
+                               CodeListName="Party Identification Code Lists"
+                               CodeListAgency="UNECE"
+                               isQualifier="true"/>
+                    <Component position="3" name="Code List Responsible Agency Code" required="false"/>
+                </Composite>
+            </Element>
+            <Element position="3" name="Name and Address" required="false"/>
+            <Element position="4" name="Party Name" required="false"/>
+        </Segment>
+    </SegmentGroup>
+
+    <!-- Segment Group 22: Product Line Item -->
+    <SegmentGroup name="SG22_ProductLineItem" start="LIN" maxOccurs="9999" description="Product line item group">
+        <Segment name="LIN" required="true" description="Line item">
+            <Element position="1" name="Line Item Number" required="true"/>
+            <Element position="2" name="Action Request Code" required="false"
+                     CodeListName="Action Request Codes"
+                     CodeListAgency="UNECE"
+                     isQualifier="true"/>
+            <Element position="3" name="Item Number Identification" required="true" description="C212 Composite">
+                <Composite name="C212 - Item Number Identification">
+                    <Component position="1" name="Item Number" required="true"/>
+                    <Component position="2" name="Code List Qualifier" required="false"
+                               CodeListName="Product Identification Code List"
+                               CodeListAgency="GS1"
+                               isQualifier="true"/>
+                    <Component position="3" name="Code List Responsible Agency Code" required="false"/>
+                </Composite>
+            </Element>
+        </Segment>
+
+        <!-- Segment Group 23: Additional product IDs -->
+        <SegmentGroup name="SG23_ProductIDs" start="PIA" maxOccurs="10" description="Additional product identification">
+            <Segment name="PIA" required="false" description="Additional product ID">
+                <Element position="1" name="Product ID Function Code" required="true"
+                         CodeListName="Product ID Function Codes"
+                         CodeListAgency="UNECE"
+                         isQualifier="true"/>
+                <Element position="2" name="Item Identification" required="true" description="C212 Composite">
+                    <Composite name="C212 - Item Number Identification">
+                        <Component position="1" name="Item Number" required="true"/>
+                        <Component position="2" name="Code List Qualifier" required="false"
+                                   CodeListName="Product Identification Code List"
+                                   CodeListAgency="GS1"
+                                   isQualifier="true"/>
+                        <Component position="3" name="Code List Responsible Agency Code" required="false"/>
+                    </Composite>
+                </Element>
+            </Segment>
+        </SegmentGroup>
+
+        <!-- Segment Group 25: Item Description -->
+        <SegmentGroup name="SG25_ItemDescription" start="IMD" maxOccurs="5" description="Item description">
+            <Segment name="IMD" required="false" description="Item description">
+                <Element position="1" name="Description Format Code" required="false"
+                         CodeListName="Description Format Codes"
+                         CodeListAgency="UNECE"
+                         isQualifier="true"/>
+                <Element position="2" name="Item Characteristic" required="false"/>
+                <Element position="3" name="Item Description" required="true"/>
+            </Segment>
+        </SegmentGroup>
+
+        <!-- Segment Group 27: Price Information -->
+        <SegmentGroup name="SG27_PriceInformation" start="PRI" maxOccurs="5" description="Price details">
+            <Segment name="PRI" required="false" description="Price details">
+                <Element position="1" name="Price Code Qualifier" required="true"
+                         CodeListName="Price Code Qualifiers"
+                         CodeListAgency="UNECE"
+                         isQualifier="true"/>
+                <Element position="2" name="Price Amount" required="true"/>
+                <Element position="3" name="Price Type Code" required="false"
+                         CodeListName="Price Type Codes"
+                         CodeListAgency="UNECE"
+                         isQualifier="true"/>
+                <Element position="4" name="Currency Code" required="false"
+                         CodeListName="Currency Codes"
+                         CodeListAgency="ISO 4217"
+                         isQualifier="true"/>
+            </Segment>
+        </SegmentGroup>
+
+        <!-- Segment Group 29: Quantity Information -->
+        <SegmentGroup name="SG29_Quantity" start="QTY" maxOccurs="10" description="Quantity information">
+            <Segment name="QTY" required="false" description="Quantity">
+                <Element position="1" name="Quantity Qualifier" required="true"
+                         CodeListName="Quantity Qualifiers"
+                         CodeListAgency="UNECE"
+                         isQualifier="true"/>
+                <Element position="2" name="Quantity" required="true"/>
+            </Segment>
+        </SegmentGroup>
+
+    </SegmentGroup>
+
+    <!-- Message Trailer -->
+    <Segment name="UNT" required="true" description="Message trailer">
+        <Element position="1" name="Segment Count" required="true"/>
+        <Element position="2" name="Message Reference Number" required="true"/>
+    </Segment>
+
+</EdifactMessage>
