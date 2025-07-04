@@ -66,42 +66,64 @@ namespace edi {
         for (pugi::xml_node segmentNode: currentSchemaParentNode.children()) {
             std::string schemaXmlNodeNameName = std::string(segmentNode.name());
             if(schemaXmlNodeNameName == "Segment") {
-                std::string schemaSegmentName = segmentNode.attribute("name").value();
-                bool isMandatorySegment = std::string(segmentNode.attribute("required").value()) == "true";
-                int maxOccurs = segmentNode.attribute("maxOccurs").as_int();
-                std::cout << "processing schema segment " << schemaSegmentName << std::endl;
-                std::optional<Segment> currentEdiSegment = edi.getCurrentSegment();
-                if(isMandatorySegment) {
-                    while(!ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentName)) {
-                        std::cout << "skipping edi segment " << currentEdiSegment.value().getName().value_or("") << std::endl;    
-                        edi.gotoNextSegment();
-                        currentEdiSegment = edi.getCurrentSegment();
-                    }
-                }
-                if(ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentName)) {
-                    Segment ediSegement = currentEdiSegment.value();
-                    int currentOccurrences = 0;
-                    while(ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentName) &&
-                        (currentOccurrences < maxOccurs)) {
-                        std::cout << "now processing edi segment " << ediSegement.getName().value_or("") << std::endl;
-                        processElements(segmentNode, edi);
-                        edi.gotoNextSegment();
-                        currentEdiSegment = edi.getCurrentSegment();
-                        currentOccurrences++;
-                    }
-                }
-                
+                processDataSegment(segmentNode, edi);
             } else if (schemaXmlNodeNameName == "SegmentGroup") {
-                std::string schemaSegmentGroupName = segmentNode.attribute("name").value();
-                std::string schemaSegmentGroupStart = segmentNode.attribute("start").value();
-                std::optional<Segment> currentEdiSegment = edi.getCurrentSegment();
-                while(ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentGroupStart)) {
-                    std::cout << "processing schema group segment " << schemaSegmentGroupName << " starts with " << schemaSegmentGroupStart << std::endl;
-                    processAllChildSegments(segmentNode, edi, currentEdiParentNode);
-                    std::cout << "leaving schema group segment " << schemaSegmentGroupName << " starts with " << schemaSegmentGroupStart << std::endl;
-                    currentEdiSegment = edi.getCurrentSegment();
-                }
+                processSegmentGroup(segmentNode, edi, currentEdiParentNode);
             }
+        }
+    }
+
+    void SchemaFile::processSegmentGroup(pugi::xml_node &segmentNode, edi::EdiFile &edi, const pugi::xml_node &currentEdiParentNode)
+    {
+        std::string schemaSegmentGroupName = segmentNode.attribute("name").value();
+        std::string schemaSegmentGroupStart = segmentNode.attribute("start").value();
+        std::optional<Segment> currentEdiSegment = edi.getCurrentSegment();
+        while (ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentGroupStart))
+        {
+            std::cout << "processing schema group segment " << schemaSegmentGroupName << " starts with " << schemaSegmentGroupStart << std::endl;
+            processAllChildSegments(segmentNode, edi, currentEdiParentNode);
+            std::cout << "leaving schema group segment " << schemaSegmentGroupName << " starts with " << schemaSegmentGroupStart << std::endl;
+            currentEdiSegment = edi.getCurrentSegment();
+        }
+    }
+
+    void SchemaFile::processDataSegment(pugi::xml_node &segmentNode, edi::EdiFile &edi)
+    {
+        std::string schemaSegmentName = segmentNode.attribute("name").value();
+        bool isMandatorySegment = std::string(segmentNode.attribute("required").value()) == "true";
+        int maxOccurs = segmentNode.attribute("maxOccurs").as_int();
+        std::cout << "processing schema segment " << schemaSegmentName << std::endl;
+        std::optional<Segment> currentEdiSegment = edi.getCurrentSegment();
+        if (isMandatorySegment) {
+            findMatchingDataSegmentInEdi(currentEdiSegment, schemaSegmentName, edi);
+        }
+        if (ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentName)) {
+            processAllMatchingEdiSegments(currentEdiSegment, schemaSegmentName, maxOccurs, segmentNode, edi);
+        }
+    }
+
+    void SchemaFile::processAllMatchingEdiSegments(std::optional<edi::Segment> &currentEdiSegment, std::string &schemaSegmentName, int maxOccurs, pugi::xml_node &segmentNode, edi::EdiFile &edi)
+    {
+        Segment ediSegment = currentEdiSegment.value();
+        int currentOccurrences = 0;
+        while (ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentName) &&
+               (currentOccurrences < maxOccurs))
+        {
+            std::cout << "now processing edi segment " << ediSegment.getName().value_or("") << std::endl;
+            processElements(segmentNode, edi);
+            edi.gotoNextSegment();
+            currentEdiSegment = edi.getCurrentSegment();
+            currentOccurrences++;
+        }
+    }
+
+    void SchemaFile::findMatchingDataSegmentInEdi(std::optional<edi::Segment> &currentEdiSegment, std::string &schemaSegmentName, edi::EdiFile &edi)
+    {
+        while (!ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentName))
+        {
+            std::cout << "skipping edi segment " << currentEdiSegment.value().getName().value_or("") << std::endl;
+            edi.gotoNextSegment();
+            currentEdiSegment = edi.getCurrentSegment();
         }
     }
 
