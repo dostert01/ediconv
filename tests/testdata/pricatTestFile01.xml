@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+2: <PRICAT>
+2:   <UNH>
+2:     <Message_Reference_Number>1</Message_Reference_Number>
+2:     <S009_-_Message_Identifier Message_Type="PRICAT" Controlling_Agency="UN">
+2:       <Message_Type>PRICAT</Message_Type>
+2:       <Message_Version_Number>D</Message_Version_Number>
+2:       <Message_Release_Number>96A</Message_Release_Number>
+2:       <Controlling_Agency>UN</Controlling_Agency>
+2:       <Association_Assigned_Code></Association_Assigned_Code>
+2:     </S009_-_Message_Identifier>
+2:   </UNH>
+2:   <BGM Message_Function_Code="">
+2:     <C002_-_Document/Message_Name Document_Name_Code="123">
+2:       <Document_Name_Code>123</Document_Name_Code>
+2:       <Code_List_Responsible_Agency>456</Code_List_Responsible_Agency>
+2:       <Document_Name></Document_Name>
+2:     </C002_-_Document/Message_Name>
+2:     <Document_Message_Number>987654321</Document_Message_Number>
+2:     <Message_Function_Code></Message_Function_Code>
+2:   </BGM>
+2:   <DTM>
+2:     <C507_-_Date/Time/Period Date/Time/Period_Qualifier="137" Format_Qualifier="102">
+2:       <Date/Time/Period_Qualifier>137</Date/Time/Period_Qualifier>
+2:       <Date/Time/Period>20250702</Date/Time/Period>
+2:       <Format_Qualifier>102</Format_Qualifier>
+2:     </C507_-_Date/Time/Period>
+2:   </DTM>
+2:   <SG1_Parties>
+2:     <NAD Party_Function_Code_Qualifier="BY">
+2:       <Party_Function_Code_Qualifier>BY</Party_Function_Code_Qualifier>
+2:       <C082_-_Party_Identification_Details Code_List_Qualifier="">
+2:         <Party_Id>123456789</Party_Id>
+2:         <Code_List_Qualifier></Code_List_Qualifier>
+2:         <Code_List_Responsible_Agency_Code>9</Code_List_Responsible_Agency_Code>
+2:       </C082_-_Party_Identification_Details>
+2:       <Name_and_Address></Name_and_Address>
+2:       <Party_Name></Party_Name>
+2:     </NAD>
+2:     <NAD Party_Function_Code_Qualifier="SU">
+2:       <Party_Function_Code_Qualifier>SU</Party_Function_Code_Qualifier>
+2:       <C082_-_Party_Identification_Details Code_List_Qualifier="">
+2:         <Party_Id>987654321</Party_Id>
+2:         <Code_List_Qualifier></Code_List_Qualifier>
+2:         <Code_List_Responsible_Agency_Code>9</Code_List_Responsible_Agency_Code>
+2:       </C082_-_Party_Identification_Details>
+2:       <Name_and_Address></Name_and_Address>
+2:       <Party_Name></Party_Name>
+2:     </NAD>
+2:   </SG1_Parties>
+2:   <SG22_ProductLineItem>
+2:     <LIN Action_Request_Code="">
+2:       <Line_Item_Number>1</Line_Item_Number>
+2:       <Action_Request_Code></Action_Request_Code>
+2:       <C212_-_Item_Number_Identification Code_List_Qualifier="EN">
+2:         <Item_Number>1234567890123</Item_Number>
+2:         <Code_List_Qualifier>EN</Code_List_Qualifier>
+2:         <Code_List_Responsible_Agency_Code></Code_List_Responsible_Agency_Code>
+2:       </C212_-_Item_Number_Identification>
+2:     </LIN>
+2:     <SG23_ProductIDs>
+2:       <PIA Product_ID_Function_Code="1">
+2:         <Product_ID_Function_Code>1</Product_ID_Function_Code>
+2:         <C212_-_Item_Number_Identification Code_List_Qualifier="SA">
+2:           <Item_Number>ABC123</Item_Number>
+2:           <Code_List_Qualifier>SA</Code_List_Qualifier>
+2:           <Code_List_Responsible_Agency_Code></Code_List_Responsible_Agency_Code>
+2:         </C212_-_Item_Number_Identification>
+2:       </PIA>
+2:     </SG23_ProductIDs>
+2:     <SG25_ItemDescription>
+2:       <IMD Description_Format_Code="F">
+2:         <Description_Format_Code>F</Description_Format_Code>
+2:         <Item_Characteristic></Item_Characteristic>
+2:         <Item_Description>::Product description goes here</Item_Description>
+2:       </IMD>
+2:     </SG25_ItemDescription>
+2:     <SG27_PriceInformation>
+2:       <PRI Price_Code_Qualifier="AAA:12.50:AB:EUR" Price_Type_Code="" Currency_Code="">
+2:         <Price_Code_Qualifier>AAA:12.50:AB:EUR</Price_Code_Qualifier>
+2:         <Price_Amount></Price_Amount>
+2:         <Price_Type_Code></Price_Type_Code>
+2:         <Currency_Code></Currency_Code>
+2:       </PRI>
+2:     </SG27_PriceInformation>
+2:     <SG29_Quantity>
+2:       <QTY Quantity_Qualifier="12:100">
+2:         <Quantity_Qualifier>12:100</Quantity_Qualifier>
+2:         <Quantity></Quantity>
+2:       </QTY>
+2:     </SG29_Quantity>
+2:     <LIN Action_Request_Code="">
+2:       <Line_Item_Number>2</Line_Item_Number>
+2:       <Action_Request_Code></Action_Request_Code>
+2:       <C212_-_Item_Number_Identification Code_List_Qualifier="EN">
+2:         <Item_Number>9876543210987</Item_Number>
+2:         <Code_List_Qualifier>EN</Code_List_Qualifier>
+2:         <Code_List_Responsible_Agency_Code></Code_List_Responsible_Agency_Code>
+2:       </C212_-_Item_Number_Identification>
+2:     </LIN>
+2:     <SG23_ProductIDs>
+2:       <PIA Product_ID_Function_Code="1">
+2:         <Product_ID_Function_Code>1</Product_ID_Function_Code>
+2:         <C212_-_Item_Number_Identification Code_List_Qualifier="SA">
+2:           <Item_Number>XYZ987</Item_Number>
+2:           <Code_List_Qualifier>SA</Code_List_Qualifier>
+2:           <Code_List_Responsible_Agency_Code></Code_List_Responsible_Agency_Code>
+2:         </C212_-_Item_Number_Identification>
+2:       </PIA>
+2:     </SG23_ProductIDs>
+2:     <SG25_ItemDescription>
+2:       <IMD Description_Format_Code="F">
+2:         <Description_Format_Code>F</Description_Format_Code>
+2:         <Item_Characteristic></Item_Characteristic>
+2:         <Item_Description>::Second product description</Item_Description>
+2:       </IMD>
+2:     </SG25_ItemDescription>
+2:     <SG27_PriceInformation>
+2:       <PRI Price_Code_Qualifier="AAA:25.00:AB:EUR" Price_Type_Code="" Currency_Code="">
+2:         <Price_Code_Qualifier>AAA:25.00:AB:EUR</Price_Code_Qualifier>
+2:         <Price_Amount></Price_Amount>
+2:         <Price_Type_Code></Price_Type_Code>
+2:         <Currency_Code></Currency_Code>
+2:       </PRI>
+2:     </SG27_PriceInformation>
+2:     <SG29_Quantity>
+2:       <QTY Quantity_Qualifier="12:50">
+2:         <Quantity_Qualifier>12:50</Quantity_Qualifier>
+2:         <Quantity></Quantity>
+2:       </QTY>
+2:     </SG29_Quantity>
+2:   </SG22_ProductLineItem>
+2:   <UNT>
+2:     <Segment_Count>23</Segment_Count>
+2:     <Message_Reference_Number>1</Message_Reference_Number>
+2:   </UNT>
+2: </PRICAT>
