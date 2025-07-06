@@ -48,6 +48,7 @@ namespace edi
         void setName(const std::string& segmentName);
         std::optional<std::string> getName();
         bool hasElements() const;
+        std::shared_ptr<Element> newElement();
         std::shared_ptr<Element> newElement(std::string value);
         std::string getElementValue(const uint elementIndex);
         std::string getElementValue(const uint elementIndex, const uint compositeIndex);

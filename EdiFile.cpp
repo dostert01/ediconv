@@ -139,6 +139,11 @@ namespace edi {
         return getElementByIndex(elements.size() - 1);
     }
 
+    std::shared_ptr<Element> Segment::newElement() {
+        elements.emplace_back(std::make_shared<Element>());
+        return getElementByIndex(elements.size() - 1);
+    }
+
     std::string Segment::asString() {
         std::string returnValue;
         for(std::shared_ptr<Element> e: elements) {

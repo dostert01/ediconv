@@ -18,4 +18,4 @@ tests/test_schemafile
 tests/test_common
 tests/test_xml2EdiProcessor
 tests/test_xml2metaprocessor
-
+tests/test_edi2xmlprocessor

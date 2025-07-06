@@ -45,24 +45,46 @@ namespace edi {
         for (auto currentXmlEdiSegment: ediXmlNode.children(segmentName.c_str())) {
             counter++;
             std::cout << "processing segment '" << currentXmlEdiSegment.name() << "'" << std::endl;
-            auto newEdiSegment = ediFile->newSegment(segmentName);
-
-            for(pugi::xml_node schemaElement: schemaNode.children()) {
-                if(std::string(schemaElement.name()) == "Element") {
-                    std::string elementName = schemaElement.attribute("name").as_string();
-                    if(elementIsCompositeElement(schemaElement)){
-                        std::cout << "processing composite element '" << elementName << "'" << std::endl;
-                    } else {
-                        auto xmlEdiDataElement = currentXmlEdiSegment.child(edi::replaceWhitespaces(elementName));
-                        std::cout << "processing element '" << elementName << "'" << std::endl;
-                        newEdiSegment->newElement(xmlEdiDataElement.child_value());
-                    }
-                }
-            }
+            processDataElementsOfSegment(schemaNode, currentXmlEdiSegment, segmentName);
         }
 
         if(counter == 0) {
             std::cout << "skipped segment '" << segmentName << "', that was not found in edixml." << std::endl;
+        }
+    }
+
+    void Xml2EdiProcessor::processDataElementsOfSegment(pugi::xml_node &schemaNode, pugi::xml_node &currentXmlEdiSegment, const std::string& segmentName)
+    {
+        auto newEdiSegment = ediFile->newSegment(segmentName);
+        for (pugi::xml_node schemaElement : schemaNode.children()) {
+            if (std::string(schemaElement.name()) == "Element") {
+                std::string elementName = schemaElement.attribute("name").as_string();
+                if (elementIsCompositeElement(schemaElement)) {
+                    processCompositeDataElement(elementName, schemaElement, currentXmlEdiSegment, newEdiSegment);
+                }
+                else {
+                    auto xmlEdiDataElement = currentXmlEdiSegment.child(edi::replaceWhitespaces(elementName));
+                    std::cout << "processing data element '" << elementName << "'" << std::endl;
+                    newEdiSegment->newElement(xmlEdiDataElement.child_value());
+                }
+            }
+        }
+    }
+
+    void Xml2EdiProcessor::processCompositeDataElement(std::string &elementName, pugi::xml_node &schemaElement, pugi::xml_node &currentXmlEdiSegment, std::shared_ptr<edi::Segment> &newEdiSegment)
+    {
+        std::cout << "processing composite element '" << elementName << "'" << std::endl;
+        auto compositeSchemaElement = schemaElement.child("Composite");
+        std::string compositeElementNodeName = compositeSchemaElement.attribute("name").as_string();
+        auto compositeXmlEdiElement = currentXmlEdiSegment.child(edi::replaceWhitespaces(compositeElementNodeName));
+        auto newEdiElement = newEdiSegment->newElement();
+        for (auto componentSchemaNode : schemaElement.child("Composite").children("Component"))
+        {
+            std::string componentName = std::string(componentSchemaNode.attribute("name").as_string());
+            edi::replaceWhitespaces(componentName);
+            std::cout << "processing data element component '" << componentName << "'" << std::endl;
+            auto xmlEdiDataElement = compositeXmlEdiElement.child(edi::replaceWhitespaces(componentName));
+            newEdiElement->addComponent(xmlEdiDataElement.child_value());
         }
     }
 
