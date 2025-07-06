@@ -5,6 +5,7 @@
 #include <ranges>
 
 #include "edi2XmlProcessor.h"
+#include "common.h"
 
 namespace edi {
 
@@ -25,14 +26,30 @@ namespace edi {
 
     void Edi2XmlProcessor::processAllChildSegments(pugi::xml_node& currentSchemaParentNode, pugi::xml_node currentEdiParentNode) {
         for (pugi::xml_node segmentNode: currentSchemaParentNode.children()) {
+            
             std::string schemaXmlNodeNameName = std::string(segmentNode.name());
             std::string segmentName = segmentNode.attribute("name").as_string();
-            pugi::xml_node targetSegmentNode = appendNode(currentEdiParentNode, segmentName);
+    
             if(schemaXmlNodeNameName == "Segment") {
+                pugi::xml_node targetSegmentNode = appendNode(currentEdiParentNode, segmentName);
                 processDataSegment(segmentNode, targetSegmentNode);
             } else if (schemaXmlNodeNameName == "SegmentGroup") {
-                processSegmentGroup(segmentNode, targetSegmentNode);
+                processAllSegmentGroutRepetitions(segmentNode, currentEdiParentNode, segmentName);
             }
+            
+        }
+    }
+
+    void Edi2XmlProcessor::processAllSegmentGroutRepetitions(pugi::xml_node &segmentNode, pugi::xml_node &currentEdiParentNode, std::string &segmentName)
+    {
+        std::string schemaSegmentGroupName = segmentNode.attribute("name").value();
+        std::string schemaSegmentGroupStart = segmentNode.attribute("start").value();
+        auto currentEdiSegment = ediFile->getCurrentSegment();
+        while (ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentGroupStart))
+        {
+            pugi::xml_node targetSegmentNode = appendNode(currentEdiParentNode, segmentName);
+            processSegmentGroup(segmentNode, targetSegmentNode);
+            currentEdiSegment = ediFile->getCurrentSegment();
         }
     }
 
@@ -40,14 +57,10 @@ namespace edi {
     {
         std::string schemaSegmentGroupName = segmentNode.attribute("name").value();
         std::string schemaSegmentGroupStart = segmentNode.attribute("start").value();
-        std::optional<Segment> currentEdiSegment = ediFile->getCurrentSegment();
-        while (ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentGroupStart))
-        {
-            std::cout << "processing schema group segment " << schemaSegmentGroupName << " starts with " << schemaSegmentGroupStart << std::endl;
-            processAllChildSegments(segmentNode, currentEdiParentNode);
-            std::cout << "leaving schema group segment " << schemaSegmentGroupName << " starts with " << schemaSegmentGroupStart << std::endl;
-            currentEdiSegment = ediFile->getCurrentSegment();
-        }
+        auto currentEdiSegment = ediFile->getCurrentSegment();
+        std::cout << "processing schema group segment " << schemaSegmentGroupName << " starts with " << schemaSegmentGroupStart << std::endl;
+        processAllChildSegments(segmentNode, currentEdiParentNode);
+        std::cout << "leaving schema group segment " << schemaSegmentGroupName << " starts with " << schemaSegmentGroupStart << std::endl;
     }
 
     void Edi2XmlProcessor::processDataSegment(pugi::xml_node &segmentNode, pugi::xml_node currentEdiParentNode)
@@ -56,7 +69,7 @@ namespace edi {
         bool isMandatorySegment = std::string(segmentNode.attribute("required").value()) == "true";
         int maxOccurs = segmentNode.attribute("maxOccurs").as_int();
         std::cout << "processing schema segment " << schemaSegmentName << std::endl;
-        std::optional<Segment> currentEdiSegment = ediFile->getCurrentSegment();
+        auto currentEdiSegment = ediFile->getCurrentSegment();
         if (isMandatorySegment) {
             findMatchingDataSegmentInEdi(currentEdiSegment, schemaSegmentName);
         }
@@ -65,13 +78,13 @@ namespace edi {
         }
     }
 
-    void Edi2XmlProcessor::processAllMatchingEdiSegments(std::optional<edi::Segment> &currentEdiSegment, std::string &schemaSegmentName, int maxOccurs, pugi::xml_node &segmentNode, pugi::xml_node currentEdiParentNode)
+    void Edi2XmlProcessor::processAllMatchingEdiSegments(std::optional<std::shared_ptr<edi::Segment>> &currentEdiSegment, std::string &schemaSegmentName, int maxOccurs, pugi::xml_node &segmentNode, pugi::xml_node currentEdiParentNode)
     {
-        Segment ediSegment = currentEdiSegment.value();
+        std::shared_ptr<Segment> ediSegment = currentEdiSegment.value();
         int currentOccurrences = 0;
         while (ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentName) && (currentOccurrences < maxOccurs))
         {
-            std::cout << "now processing edi segment " << ediSegment.getName().value_or("") << std::endl;
+            std::cout << "now processing edi segment " << ediSegment->getName().value_or("") << std::endl;
             processElements(segmentNode, currentEdiParentNode);
             ediFile->gotoNextSegment();
             currentEdiSegment = ediFile->getCurrentSegment();
@@ -79,18 +92,18 @@ namespace edi {
         }
     }
 
-    void Edi2XmlProcessor::findMatchingDataSegmentInEdi(std::optional<edi::Segment> &currentEdiSegment, std::string &schemaSegmentName)
+    void Edi2XmlProcessor::findMatchingDataSegmentInEdi(std::optional<std::shared_ptr<edi::Segment>> &currentEdiSegment, std::string &schemaSegmentName)
     {
         while (!ediSegmentMatchesSchemaSegment(currentEdiSegment, schemaSegmentName))
         {
-            std::cout << "skipping edi segment " << currentEdiSegment.value().getName().value_or("") << std::endl;
+            std::cout << "skipping edi segment " << currentEdiSegment.value()->getName().value_or("") << std::endl;
             ediFile->gotoNextSegment();
             currentEdiSegment = ediFile->getCurrentSegment();
         }
     }
 
-    bool Edi2XmlProcessor::ediSegmentMatchesSchemaSegment(std::optional<Segment>& currentEdiSegment, const std::string& schemaXmlNodeNameName) {
-        return currentEdiSegment.has_value() && (currentEdiSegment.value().getName() == schemaXmlNodeNameName);
+    bool Edi2XmlProcessor::ediSegmentMatchesSchemaSegment(std::optional<std::shared_ptr<Segment>>& currentEdiSegment, const std::string& schemaXmlNodeNameName) {
+        return currentEdiSegment.has_value() && (currentEdiSegment.value()->getName() == schemaXmlNodeNameName);
     }
 
     void Edi2XmlProcessor::processElements(pugi::xml_node segmentNode, pugi::xml_node currentEdiParentNode) {
@@ -100,10 +113,10 @@ namespace edi {
             if(schemaXmlNodeNameName == "Element") {
                 std::string elementName = elementNode.attribute("name").value();
                 std::cout << "processing element " << elementName << std::endl;
-                if(elementNode.child("Composite") != nullptr)
+                if (elementIsCompositeElement(elementNode))
                     processCompositeElement(elementNode, elementIndex, currentEdiParentNode);
                 else {
-                    std::string value = ediFile->getCurrentSegment().value().getElementValue(elementIndex);
+                    std::string value = ediFile->getCurrentSegment().value()->getElementValue(elementIndex);
                     std::cout << "element value: " << value << std::endl;
                     appendPCDataNode(currentEdiParentNode, elementName, value);
                     addAsQualifierToParentNode(elementNode, currentEdiParentNode, elementName, value);
@@ -111,6 +124,11 @@ namespace edi {
             }
             elementIndex++;
         }
+    }
+
+    bool Edi2XmlProcessor::elementIsCompositeElement(pugi::xml_node &elementNode)
+    {
+        return elementNode.child("Composite") != nullptr;
     }
 
     void Edi2XmlProcessor::addAsQualifierToParentNode(pugi::xml_node &elementNode, pugi::xml_node &currentEdiParentNode, std::string &elementName, std::string &value)    {
@@ -148,7 +166,7 @@ namespace edi {
                 std::string schemaXmlNodeNameName = std::string(componentNode.name());
                 if(schemaXmlNodeNameName == "Component") {
                     std::string componentName = componentNode.attribute("name").value();
-                    std::string value = ediFile->getCurrentSegment().value().getElementValue(elementIndex, componentIndex);
+                    std::string value = ediFile->getCurrentSegment().value()->getElementValue(elementIndex, componentIndex);
                     appendPCDataNode(compositeTargetNode, componentName, value);
                     addAsQualifierToParentNode(componentNode, compositeTargetNode, componentName, value);
                     std::cout << "processing element name: '" << componentName << 
@@ -157,21 +175,6 @@ namespace edi {
                 componentIndex++;
            }
         }
-    }
-
-    std::string Edi2XmlProcessor::replaceWhitespaces(std::string& s) {
-        std::string r = "_";
-        return replaceWhitespaces(s, r);
-    }
-
-    std::string Edi2XmlProcessor::replaceWhitespaces(std::string& s, std::string& r) {
-        std::string toReplace = " ";
-        size_t start = 0;
-        while((start = s.find(toReplace, start)) != std::string::npos) {
-            s.replace(start, toReplace.length(), r);
-            start += r.length();
-        }
-        return s;
     }
 
 } // edi

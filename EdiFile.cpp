@@ -41,6 +41,10 @@ namespace edi {
         return rawElementString;
     }
 
+    void Element::setRawElementString(const std::string elementString) {
+        rawElementString = elementString;
+    }
+
     const std::vector<Component>& Element::getComponents() const {
         return components;
     }
@@ -51,6 +55,18 @@ namespace edi {
 
     const bool Element::isSingleComponentElement() const {
         return components.size() == 1;
+    }
+
+    void Element::addComponent(std::string value) {
+        components.emplace_back(value);
+    }
+
+    std::string Element::asString() {
+        std::string returnValue;
+        for(Component c: components) {
+            returnValue += (c.getValue() + EDI_COMPONENT_SEPARATOR);
+        }
+        return returnValue.substr(0, returnValue.length() - 1);
     }
 
     // ----------------------------------------------------------------------
@@ -65,38 +81,70 @@ namespace edi {
         size_t currentPosition = 0;
 
         while ((currentPosition = segmentString.find(EDI_ELEMENT_SEPARATOR, startIndex)) != std::string::npos) {
-            elements.emplace_back(segmentString.substr(startIndex, currentPosition - startIndex));
+            elements.emplace_back(std::make_shared<Element>(segmentString.substr(startIndex, currentPosition - startIndex)));
             startIndex = currentPosition + 1;
         }
-        elements.emplace_back(segmentString.substr(startIndex, segmentString.length() - (startIndex)));
+        elements.emplace_back(std::make_shared<Element>(segmentString.substr(startIndex, segmentString.length() - (startIndex))));
     }
 
-    const std::vector<Element>& Segment::getElements() const {
+    const std::vector<std::shared_ptr<Element>>& Segment::getElements() const {
         return elements;
     }
 
-    std::optional<std::string> Segment::getName() const {
+    std::optional<std::string> Segment::getName() {
         std::optional<std::string> returnValue = std::nullopt;
-        if (elements.size() > 0) {
-            returnValue = elements.at(0).getRawElementString();  
+        if (hasElements())
+        {
+            returnValue = getElementByIndex(0)->getRawElementString();
         }
         return returnValue;
+    }
+
+    bool Segment::hasElements() const
+    {
+        return elements.size() > 0;
+    }
+
+    void Segment::setName(const std::string& segmentName) {
+        if(!hasElements()) {
+            elements.emplace_back(std::make_shared<Element>(segmentName));
+        } else {
+            getElementByIndex(0)->setRawElementString(segmentName);
+        }
     }
 
     std::string Segment::getElementValue(const uint elementIndex) {
         std::string returnValue = "";
         if(elementIndex < elements.size()) {
-            returnValue = elements.at(elementIndex).getRawElementString();
+            returnValue = getElementByIndex(elementIndex)->getRawElementString();
         }
         return returnValue;
     }
 
     std::string Segment::getElementValue(const uint elementIndex, const uint compositeIndex) {
         std::string returnValue = "";
-        if(elementIndex < elements.size() && elements.at(elementIndex).hasComponents() && (compositeIndex < elements.at(elementIndex).getComponents().size())) {
-            returnValue = elements.at(elementIndex).getComponents().at(compositeIndex).getValue();
+        if(elementIndex < elements.size() && elements.at(elementIndex)->hasComponents() &&
+            (compositeIndex < getElementByIndex(elementIndex)->getComponents().size())) {
+                returnValue = getElementByIndex(elementIndex)->getComponents().at(compositeIndex).getValue();
         }
         return returnValue;
+    }
+
+    std::shared_ptr<Element> Segment::getElementByIndex(const uint elementIndex) {
+        return elements.at(elementIndex);
+    }
+
+    std::shared_ptr<Element> Segment::newElement(std::string value) {
+        elements.emplace_back(std::make_shared<Element>(value));
+        return getElementByIndex(elements.size() - 1);
+    }
+
+    std::string Segment::asString() {
+        std::string returnValue;
+        for(std::shared_ptr<Element> e: elements) {
+            returnValue += (e->asString() + EDI_ELEMENT_SEPARATOR);
+        }
+        return returnValue.substr(0, returnValue.length() - 1);
     }
 
     // ----------------------------------------------------------------------
@@ -115,7 +163,7 @@ namespace edi {
             while(std::getline(file, singleSegmentString, EDI_SEGMENT_SEPARATOR)) {
                 singleSegmentString = trim(singleSegmentString);
                 if(singleSegmentString.length() > 0 && !singleSegmentString.empty())
-                    segments.emplace_back(Segment(singleSegmentString));
+                    segments.emplace_back(std::make_shared<Segment>(singleSegmentString));
             }
             fileLoadingSucceeded = true;
         } else {
@@ -123,12 +171,20 @@ namespace edi {
         }
     }
 
-    const std::vector<Segment>& EdiFile::getSegments() const {
+    const std::vector<std::shared_ptr<Segment>>& EdiFile::getSegments() const {
         return segments;
     }
 
-    std::optional<Segment> EdiFile::getCurrentSegment() {
-        std::optional<Segment> returnValue = std::nullopt;
+    std::optional<std::shared_ptr<Segment>> EdiFile::getSegment(int index) {
+        std::optional<std::shared_ptr<Segment>> returnValue = std::nullopt;
+        if(index < segments.size()) {
+            returnValue = segments.at(index);
+        }
+        return returnValue;
+    }
+
+    std::optional<std::shared_ptr<Segment>> EdiFile::getCurrentSegment() {
+        std::optional<std::shared_ptr<Segment>> returnValue = std::nullopt;
         if(readSegmentCursor < segments.size()) {
             returnValue = segments.at(readSegmentCursor);
         }
@@ -137,6 +193,20 @@ namespace edi {
     void EdiFile::gotoNextSegment() {
         readSegmentCursor++;
     }
+
+    std::shared_ptr<Segment> EdiFile::newSegment(const std::string segmentName) {
+        segments.emplace_back(std::make_shared<Segment>(segmentName));
+        return segments.at(segments.size() - 1);
+    }
+
+    std::string EdiFile::asString() {
+        std::string returnValue;
+        for(std::shared_ptr<Segment> s: segments) {
+            returnValue += (s->asString() + EDI_SEGMENT_SEPARATOR);
+        }
+        return returnValue;
+    }
+
 
     std::string EdiFile::trim(const std::string& s) {
         std::string returnValue = "";

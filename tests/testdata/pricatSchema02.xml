@@ -17,8 +17,8 @@
   <!-- Beginning of message -->
   <Segment name="BGM" required="true" description="Beginning of message" maxOccurs="1">
     <Element position="1" name="Document Message Name" required="true" description="C002 Composite">
-      <Composite name="C002 - Document/Message Name">
-        <Component position="1" name="Document Name Code" required="true" CodeListName="Document/Message Name Codes" CodeListAgency="UNECE" isQualifier="true" />
+      <Composite name="C002 - Document_Message Name">
+        <Component position="1" name="Document Name Code" required="true" CodeListName="Document_Message Name Codes" CodeListAgency="UNECE" isQualifier="true" />
         <Component position="2" name="Code List Responsible Agency" required="false" />
         <Component position="3" name="Document Name" required="false" />
       </Composite>
@@ -27,13 +27,13 @@
     <Element position="3" name="Message Function Code" required="false" CodeListName="Message Function Codes" CodeListAgency="UNECE" isQualifier="true" />
   </Segment>
 
-  <!-- Date/time/period -->
-  <Segment name="DTM" required="true" description="Date/time/period" maxOccurs="35">
-    <Element position="1" name="Date/Time/Period" required="true" description="C507 Composite">
-      <Composite name="C507 - Date/Time/Period">
-        <Component position="1" name="Date/Time/Period Qualifier" required="true" CodeListName="Date/Time/Period Qualifiers" CodeListAgency="UNECE" isQualifier="true" />
-        <Component position="2" name="Date/Time/Period" required="true" />
-        <Component position="3" name="Format Qualifier" required="false" CodeListName="Date/Time/Period Format Codes" CodeListAgency="UNECE" isQualifier="true" />
+  <!-- Date_time_period -->
+  <Segment name="DTM" required="true" description="Date_time_period" maxOccurs="35">
+    <Element position="1" name="Date_Time_Period" required="true" description="C507 Composite">
+      <Composite name="C507 - Date_Time_Period">
+        <Component position="1" name="Date_Time_Period Qualifier" required="true" CodeListName="Date_Time_Period Qualifiers" CodeListAgency="UNECE" isQualifier="true" />
+        <Component position="2" name="Date_Time_Period" required="true" />
+        <Component position="3" name="Format Qualifier" required="false" CodeListName="Date_Time_Period Format Codes" CodeListAgency="UNECE" isQualifier="true" />
       </Composite>
     </Element>
   </Segment>

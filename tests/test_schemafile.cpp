@@ -58,3 +58,26 @@ TEST(schemaFile, getVersionWorks) {
     EXPECT_EQ("D96A", schemaFile.getMessageVersion());
 }
 
+TEST(schemaQualification, getQualifiesEdiPath01) {
+    test_schemafile::configureTest();
+    edi::SchemaFile schemaFile;
+    schemaFile.loadFromFile(test_schemafile::testFilesDir + SCHEMA_TEST_FILE_01);
+    EXPECT_EQ("/PRICAT/UNH/Message_Reference_Number", schemaFile.getEdiPath("/EdifactMessage/Segment[@name='UNH']/Element[@name='Message Reference Number']"));
+}
+
+TEST(schemaQualification, getQualifiesEdiPath02) {
+    test_schemafile::configureTest();
+    edi::SchemaFile schemaFile;
+    schemaFile.loadFromFile(test_schemafile::testFilesDir + SCHEMA_TEST_FILE_01);
+    EXPECT_EQ("/PRICAT/UNH/S009_-_Message_Identifier/Controlling_Agency", schemaFile.getEdiPath("/EdifactMessage/Segment[@name='UNH']/Element[@name='Message Identifier']/Composite[@name='S009 - Message Identifier']/Component[@name='Controlling Agency']"));
+}
+
+TEST(schemaQualification, getQualifiesEdiPath03) {
+    test_schemafile::configureTest();
+    edi::SchemaFile schemaFile;
+    schemaFile.loadFromFile(test_schemafile::testFilesDir + SCHEMA_TEST_FILE_01);
+    EXPECT_EQ(
+        "/PRICAT/SG22_ProductLineItem/SG23_ProductIDs/PIA/Product_ID_Function_Code",
+        schemaFile.getEdiPath(
+            "/EdifactMessage/SegmentGroup[@name='SG22_ProductLineItem']/SegmentGroup[@name='SG23_ProductIDs']/Segment[@name='PIA']/Element[@name='Product ID Function Code']"));
+}

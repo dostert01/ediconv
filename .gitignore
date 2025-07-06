@@ -14,5 +14,8 @@ tests/Testing/
 tests/cmake_install.cmake
 tests/test_edifile
 tests/test_schemafile
-
+.idea/vcs.xml
+tests/test_common
+tests/test_xml2EdiProcessor
+tests/test_xml2metaprocessor
 

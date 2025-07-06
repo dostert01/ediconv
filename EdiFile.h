@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <optional>
+#include <memory>
 
 namespace edi
 {
@@ -20,42 +21,57 @@ namespace edi
     };
 
     class Element {
+
+    public:
+        Element() = default;
+        Element(const std::string &elementString);
+        const std::string &getRawElementString() const;
+        void setRawElementString(const std::string elementString);
+        const std::vector<Component> &getComponents() const;
+        const bool hasComponents() const;
+        const bool isSingleComponentElement() const;
+        void addComponent(std::string value);
+        std::string asString();
+
     private:
         std::string rawElementString;
         std::vector<Component> components;
         void createComponents();
 
-    public:
-        Element(const std::string &elementString);
-        const std::string &getRawElementString() const;
-        const std::vector<Component> &getComponents() const;
-        const bool hasComponents() const;
-        const bool isSingleComponentElement() const;
     };
 
     class Segment {
-    private:
-        std::vector<Element> elements;
-        void createContainedElements(const std::string &segmentString);
     public:
         Segment() = default;
         Segment(const std::string &segmentString);
-        const std::vector<Element> &getElements() const;
-        std::optional<std::string> getName() const;
+        const std::vector<std::shared_ptr<Element>> &getElements() const;
+        void setName(const std::string& segmentName);
+        std::optional<std::string> getName();
+        bool hasElements() const;
+        std::shared_ptr<Element> newElement(std::string value);
         std::string getElementValue(const uint elementIndex);
         std::string getElementValue(const uint elementIndex, const uint compositeIndex);
+        std::string asString();
+
+    private:
+        std::vector<std::shared_ptr<Element>> elements;
+        void createContainedElements(const std::string &segmentString);
+        std::shared_ptr<Element> getElementByIndex(const uint elementIndex);
     };
 
     class EdiFile {
         public:
             EdiFile();
             void loadFromFile(const std::string& fileName);
-            const std::vector<Segment>& getSegments() const;
+            const std::vector<std::shared_ptr<Segment>>& getSegments() const;
+            std::optional<std::shared_ptr<Segment>> getSegment(int index);
             const bool fileLoaded() const;
-            std::optional<Segment> getCurrentSegment();
+            std::optional<std::shared_ptr<Segment>> getCurrentSegment();
             void gotoNextSegment();
+            std::shared_ptr<Segment> newSegment(const std::string segmentName);
+            std::string asString();
         private:
-            std::vector<Segment> segments;
+            std::vector<std::shared_ptr<Segment>> segments;
             std::string trim(const std::string& s);
             bool fileLoadingSucceeded;
             int readSegmentCursor;

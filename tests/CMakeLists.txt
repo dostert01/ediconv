@@ -29,6 +29,7 @@ add_executable(
         test_schemafile.cpp
         ../SchemaFile.cpp
         ../EdiFile.cpp
+        ../common.cpp
 )
 add_test(NAME test_schemafile COMMAND test_schemafile)
 set_tests_properties(test_schemafile PROPERTIES ENVIRONMENT "TEST_FILES_DIR=${TEST_FILES_DIR}")
@@ -39,6 +40,34 @@ add_executable(
         ../SchemaFile.cpp
         ../EdiFile.cpp
         ../edi2XmlProcessor.cpp
+        ../common.cpp
 )
 add_test(NAME test_edi2xmlprocessor COMMAND test_edi2xmlprocessor)
 set_tests_properties(test_edi2xmlprocessor PROPERTIES ENVIRONMENT "TEST_FILES_DIR=${TEST_FILES_DIR}")
+
+add_executable(
+        test_xml2metaprocessor
+        test_xml2MetaProcessor.cpp
+        ../xml2MetaProcessor.cpp
+)
+add_test(NAME test_xml2metaprocessor COMMAND test_xml2metaprocessor)
+set_tests_properties(test_xml2metaprocessor PROPERTIES ENVIRONMENT "TEST_FILES_DIR=${TEST_FILES_DIR}")
+
+add_executable(
+        test_xml2EdiProcessor
+        test_xml2EdiProcessor.cpp
+        ../xml2EdiProcessor.cpp
+        ../SchemaFile.cpp
+        ../EdiFile.cpp
+        ../common.cpp
+)
+add_test(NAME test_xml2EdiProcessor COMMAND test_xml2EdiProcessor)
+set_tests_properties(test_xml2EdiProcessor PROPERTIES ENVIRONMENT "TEST_FILES_DIR=${TEST_FILES_DIR}")
+
+add_executable(
+        test_common
+        test_common.cpp
+        ../common.cpp
+)
+add_test(NAME test_common COMMAND test_common)
+set_tests_properties(test_common PROPERTIES ENVIRONMENT "TEST_FILES_DIR=${TEST_FILES_DIR}")

@@ -12,6 +12,7 @@ add_executable(ediconv main.cpp
         EdiFile.cpp
         SchemaFile.cpp
         edi2XmlProcessor.cpp
+        common.cpp
 )
 target_link_libraries(ediconv PUBLIC pugixml)
 
