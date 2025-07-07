@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <!-- Root element -->
+  <xs:element name="EdifactMessage">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="Segment" type="SegmentType" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element name="SegmentGroup" type="SegmentGroupType" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:choice>
+      <xs:attribute name="type" type="xs:string" use="required"/>
+      <xs:attribute name="version" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Segment definition -->
+  <xs:complexType name="SegmentType">
+    <xs:sequence>
+      <xs:element name="Element" type="ElementType" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="required" type="xs:boolean" use="required"/>
+    <xs:attribute name="description" type="xs:string"/>
+    <xs:attribute name="maxOccurs" type="xs:string" default="1"/>
+  </xs:complexType>
+
+  <!-- Element definition -->
+  <xs:complexType name="ElementType">
+    <xs:sequence>
+      <xs:element name="Composite" type="CompositeType" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="position" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="required" type="xs:boolean" use="required"/>
+    <xs:attribute name="description" type="xs:string" use="optional"/>
+    <xs:attribute name="CodeListName" type="xs:string" use="optional"/>
+    <xs:attribute name="CodeListAgency" type="xs:string" use="optional"/>
+    <xs:attribute name="isQualifier" type="xs:boolean" use="optional"/>
+  </xs:complexType>
+
+  <!-- Composite definition -->
+  <xs:complexType name="CompositeType">
+    <xs:sequence>
+      <xs:element name="Component" type="ComponentType" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <!-- Component definition -->
+  <xs:complexType name="ComponentType">
+    <xs:attribute name="position" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="required" type="xs:boolean" use="required"/>
+    <xs:attribute name="CodeListName" type="xs:string" use="optional"/>
+    <xs:attribute name="CodeListAgency" type="xs:string" use="optional"/>
+    <xs:attribute name="isQualifier" type="xs:boolean" use="optional"/>
+  </xs:complexType>
+
+  <!-- Segment Group definition -->
+  <xs:complexType name="SegmentGroupType">
+    <xs:sequence>
+      <xs:element name="Segment" type="SegmentType" maxOccurs="unbounded" minOccurs="1"/>
+      <xs:element name="SegmentGroup" type="SegmentGroupType" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="start" type="xs:string" use="required"/>
+    <xs:attribute name="repeat" type="xs:string" use="optional"/>
+    <xs:attribute name="description" type="xs:string" use="optional"/>
+    <xs:attribute name="maxOccurs" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+</xs:schema>
