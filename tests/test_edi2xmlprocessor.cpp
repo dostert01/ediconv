@@ -9,6 +9,7 @@
 #define SCHEMA_TEST_FILE_01 "/pricatSchema01.xml"
 #define SCHEMA_TEST_FILE_02 "/pricatSchema02.xml"
 #define EDI_TEST_FILE_01 "/pricatTestFile01.edi"
+#define EDI_TEST_FILE_03 "/pricatTestFile03.edi"
 
 namespace test_edi2XmlProcessor {
     std::string workingDir;
@@ -30,13 +31,25 @@ namespace test_edi2XmlProcessor {
     }
 }
 
-TEST(schemaFile, processingWorks) {
+TEST(schemaFile, processingWorks01) {
     test_edi2XmlProcessor::configureTest();
     auto schemaFile = std::make_shared<edi::SchemaFile>();
     auto edifile = std::make_shared<edi::EdiFile>();
     edi::Edi2XmlProcessor processor;
     schemaFile->loadFromFile(test_edi2XmlProcessor::testFilesDir + SCHEMA_TEST_FILE_02);
     edifile->loadFromFile((test_edi2XmlProcessor::testFilesDir + EDI_TEST_FILE_01));
+    std::shared_ptr<pugi::xml_document> ediXml = std::make_shared<pugi::xml_document>();
+    processor.process(edifile, schemaFile, ediXml);
+    ediXml->save(std::cout, "  ");
+}
+
+TEST(schemaFile, processingWorks02) {
+    test_edi2XmlProcessor::configureTest();
+    auto schemaFile = std::make_shared<edi::SchemaFile>();
+    auto edifile = std::make_shared<edi::EdiFile>();
+    edi::Edi2XmlProcessor processor;
+    schemaFile->loadFromFile(test_edi2XmlProcessor::testFilesDir + SCHEMA_TEST_FILE_02);
+    edifile->loadFromFile((test_edi2XmlProcessor::testFilesDir + EDI_TEST_FILE_03));
     std::shared_ptr<pugi::xml_document> ediXml = std::make_shared<pugi::xml_document>();
     processor.process(edifile, schemaFile, ediXml);
     ediXml->save(std::cout, "  ");

@@ -63,12 +63,17 @@ namespace edi {
                     processCompositeDataElement(elementName, schemaElement, currentXmlEdiSegment, newEdiSegment);
                 }
                 else {
-                    auto xmlEdiDataElement = currentXmlEdiSegment.child(edi::replaceWhitespaces(elementName));
-                    std::cout << "processing data element '" << elementName << "'" << std::endl;
-                    newEdiSegment->newElement(xmlEdiDataElement.child_value());
+                    processSimpleDataElement(currentXmlEdiSegment, elementName, newEdiSegment);
                 }
             }
         }
+    }
+
+    void Xml2EdiProcessor::processSimpleDataElement(pugi::xml_node &currentXmlEdiSegment, std::string &elementName, std::shared_ptr<edi::Segment> &newEdiSegment)
+    {
+        auto xmlEdiDataElement = currentXmlEdiSegment.child(edi::replaceWhitespaces(elementName));
+        std::cout << "processing data element '" << elementName << "'" << std::endl;
+        newEdiSegment->newElement(xmlEdiDataElement.child_value());
     }
 
     void Xml2EdiProcessor::processCompositeDataElement(std::string &elementName, pugi::xml_node &schemaElement, pugi::xml_node &currentXmlEdiSegment, std::shared_ptr<edi::Segment> &newEdiSegment)

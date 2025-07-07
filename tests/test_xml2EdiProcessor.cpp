@@ -10,6 +10,7 @@
 
 #define XML_TEST_FILE_01 "/pricatTestFile01.xml"
 #define SCHEMA_TEST_FILE_02 "/pricatSchema02.xml"
+#define EDI_TEST_FILE_03 "/pricatTestFile03.edi"
 
 namespace 
 test_xml2EdiProcessor {
@@ -43,8 +44,11 @@ TEST(Xml2Edi, processingWorks) {
     edixmlFile->save(std::cout, "  ");
 
     processor.process(edixmlFile, schemaFile, ediFile);
-
-    EXPECT_EQ("bla", ediFile->asString());
+    std::string result = ediFile->asString();
+    edi::EdiFile nominalValueEdiFile;
+    nominalValueEdiFile.loadFromFile(test_xml2EdiProcessor::testFilesDir + EDI_TEST_FILE_03);
+    
+    EXPECT_EQ(nominalValueEdiFile.asString(), ediFile->asString());
     
 }
 

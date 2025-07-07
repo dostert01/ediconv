@@ -22,6 +22,7 @@ namespace edi
             void processSegmentsAndSegmentGroups(const pugi::xml_node& schemaNode, const pugi::xml_node& ediXmlNode);
             void processSegment(pugi::xml_node node, const pugi::xml_node &ediXmlNode);
             void processDataElementsOfSegment(pugi::xml_node &schemaNode, pugi::xml_node &currentXmlEdiSegment, const std::string &segmentName);
+            void processSimpleDataElement(pugi::xml_node &currentXmlEdiSegment, std::string &elementName, std::shared_ptr<edi::Segment> &newEdiSegment);
             void processCompositeDataElement(std::string &elementName, pugi::xml_node &schemaElement, pugi::xml_node &currentXmlEdiSegment, std::shared_ptr<edi::Segment> &newEdiSegment);
             void processSegmentGroups(pugi::xml_node node, const pugi::xml_node& ediXmlNode);
             void processSegmentGroup(pugi::xml_node node, const pugi::xml_node& ediXmlNode);
